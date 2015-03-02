@@ -1,25 +1,26 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(robot_self_filter)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-find_package(Eigen REQUIRED)
-find_package(PCL REQUIRED)
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS}
-                           ${PCL_INCLUDE_DIRS}
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  tf
+  tf_conversions
+  filters
+  sensor_msgs
+  visualization_msgs
+  geometric_shapes
+  urdf
+  resource_retriever
+  pcl_conversions
+  shape_msgs
+  cmake_modules
 )
 
-set(ROS_BUILD_TYPE Release)
-
-find_package(PCL)
-include_directories(SYSTEM ${PCL_INCLUDE_DIRS})
+find_package(PCL REQUIRED)
+find_package(Eigen REQUIRED)
+find_package(OpenMP REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(Boost REQUIRED)
 find_package(ASSIMP QUIET)
 if (NOT ASSIMP_FOUND)
   pkg_check_modules(ASSIMP assimp)
@@ -45,25 +46,46 @@ else()
   set(IS_ASSIMP3 0) # most likely not
 endif()
 
-rosbuild_init()
-
-rosbuild_add_boost_directories()
-
-rosbuild_add_library(robot_self_filter src/self_mask.cpp)
-rosbuild_add_openmp_flags(robot_self_filter)
-target_link_libraries(robot_self_filter assimp
-                                        geometric_shapes
-                                        ${PCL_LIBRARIES}
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS
+  roscpp
+  tf
+  tf_conversions
+  filters
+  sensor_msgs
+  visualization_msgs
+  geometric_shapes
+  urdf
+  resource_retriever
+  pcl_conversions
+  shape_msgs
+  cmake_modules
+  DEPENDS
 )
 
-rosbuild_add_executable (test_filter src/test_filter.cpp)
-rosbuild_add_openmp_flags (test_filter)
-target_link_libraries (test_filter robot_self_filter assimp)
+include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS} SYSTEM ${PCL_INCLUDE_DIRS} ${OpenMP_INCLUDE_DIRS})
 
-rosbuild_add_executable(self_filter src/self_filter.cpp)
-rosbuild_add_openmp_flags(self_filter)
-target_link_libraries(self_filter assimp
-                                  geometric_shapes
-                                  robot_self_filter
+add_library(robot_self_filter src/self_mask.cpp)
+target_link_libraries(robot_self_filter ${catkin_LIBRARIES})
+add_dependencies(robot_self_filter assimp ${catkin_EXPORTED_TARGETS})
+
+add_executable(test_filter src/test_filter.cpp)
+target_link_libraries(test_filter ${PROJECT_NAME} ${catkin_LIBRARIES})
+
+add_executable(self_filter src/self_filter.cpp)
+target_link_libraries(self_filter ${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+install(TARGETS ${PROJECT_NAME}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
-rosbuild_link_boost(self_filter signals)
+
+install(TARGETS test_filter self_filter
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
+install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

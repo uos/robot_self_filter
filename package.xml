@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<package>
+  <name>robot_self_filter</name>
+  <version>0.1.0</version>
+  <description>
+    Filters robot parts from sensor data using the known positions and orientations of these parts.
+  </description>
+  <author>Ioan Sucan</author>
+  <maintainer email="kohlbrecher@sim.tu-darmstadt.de">Stefan Kohlbrecher</maintainer>
+  <license>BSD</license>
+  <url type="website">http://ros.org/wiki/robot_self_filter</url>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>tf_conversions</build_depend>
+  <build_depend>filters</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>geometric_shapes</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>resource_retriever</build_depend>
+  <build_depend>pcl_conversions</build_depend>
+  <build_depend>shape_msgs</build_depend>
+  <build_depend>cmake_modules</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>tf_conversions</run_depend>
+  <run_depend>filters</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>geometric_shapes</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>resource_retriever</run_depend>
+  <run_depend>pcl_conversions</run_depend>
+  <run_depend>shape_msgs</run_depend>
+  <run_depend>cmake_modules</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
