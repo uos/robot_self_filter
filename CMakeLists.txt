@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
+cmake_policy(SET CMP0046 OLD)
 project(robot_self_filter)
+
+add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -17,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(PCL REQUIRED)
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(OpenMP REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Boost REQUIRED)
